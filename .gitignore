@@ -34,3 +34,5 @@ logs/
 # Build outputs
 dist/
 build/
+.env
+**/.env
