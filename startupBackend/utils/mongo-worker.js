@@ -8,7 +8,7 @@ async function connectToDatabase(uri) {
 
   if (cachedClient && cachedDb) {
     try {
-      await cachedClient.db().admin().ping();
+      await cachedClient.db().admin().ping({ maxTimeMS: 5000 });
       return { client: cachedClient, db: cachedDb };
     } catch {
       cachedClient = null;
@@ -20,8 +20,9 @@ async function connectToDatabase(uri) {
     console.log("🔌 New MongoDB connection attempt...");
     const client = new MongoClient(uri, {
       maxPoolSize: 10,
-      serverSelectionTimeoutMS: 5000,
-      connectTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 30000,
+      connectTimeoutMS: 30000,
+      socketTimeoutMS: 30000,
     });
 
     await client.connect();
