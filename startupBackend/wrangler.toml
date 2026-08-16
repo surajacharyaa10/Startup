@@ -1,0 +1,17 @@
+name = "startup-backend"
+main = "worker.js"
+compatibility_date = "2025-01-09"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+NODE_ENV = "production"
+
+[[kv_namespaces]]
+binding = "CACHE"
+id = "e4845932eca24e6c802430d06b0171a4"
+
+[assets]
+not_found_handling = "none"
+
+[observability]
+enabled = true
