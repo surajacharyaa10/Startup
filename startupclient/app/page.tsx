@@ -15,7 +15,6 @@ export default function Home() {
     <div className="bg-[#0a0a1f] min-h-screen relative">
       <ScrollProgress />
       <CustomCursor />
-      <ParticleBackground />
       <Hero />
       <Stats />
       <About />

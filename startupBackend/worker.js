@@ -3,19 +3,19 @@ const { cors } = require("hono/cors");
 const { connectToDatabase, getDb } = require("./utils/mongo-worker");
 const cloudinary = require("cloudinary").v2;
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
 const app = new Hono();
 
 app.use("*", cors());
 
 app.use("*", async (c, next) => {
+  const mongoUrl = c.env.MONGO_URL;
+  cloudinary.config({
+    cloud_name: c.env.CLOUDINARY_CLOUD_NAME,
+    api_key: c.env.CLOUDINARY_API_KEY,
+    api_secret: c.env.CLOUDINARY_API_SECRET,
+  });
   try {
-    await connectToDatabase(process.env.MONGO_URL);
+    await connectToDatabase(mongoUrl);
     await next();
   } catch (err) {
     return c.json(
@@ -199,6 +199,12 @@ app.post("/upload", async (c) => {
 
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
+
+    cloudinary.config({
+      cloud_name: c.env.CLOUDINARY_CLOUD_NAME,
+      api_key: c.env.CLOUDINARY_API_KEY,
+      api_secret: c.env.CLOUDINARY_API_SECRET,
+    });
 
     const result = await new Promise((resolve, reject) => {
       cloudinary.uploader
