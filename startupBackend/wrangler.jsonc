@@ -5,7 +5,10 @@
   "compatibility_flags": ["nodejs_compat"],
   "vars": {
     "NODE_ENV": "production",
-    "MONGO_URL": "mongodb+srv://surajacharya993_db_user:eagle123@cluster0.15o3dza.mongodb.net/?appName=Cluster0",
+    "MONGODB_DATA_API_APP_ID": "your-app-id-from-atlas-data-api",
+    "MONGODB_DATA_API_KEY": "your-data-api-key",
+    "MONGODB_DATA_SOURCE": "Cluster0",
+    "MONGODB_DATABASE": "test",
     "CLOUDINARY_CLOUD_NAME": "dx0f7h4at",
     "CLOUDINARY_API_KEY": "928977411397552",
     "CLOUDINARY_API_SECRET": "Td5D_RKqVEoTXbz8-wKhX95XSnc",

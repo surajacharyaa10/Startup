@@ -1,32 +1,19 @@
 const { Hono } = require("hono");
 const { cors } = require("hono/cors");
-const { connectToDatabase, getDb } = require("./utils/mongo-worker");
 const cloudinary = require("cloudinary").v2;
+const { findOne, find, insertOne, updateOne, deleteOne } = require("./utils/mongo-data-api");
 
 const app = new Hono();
 
 app.use("*", cors());
 
 app.use("*", async (c, next) => {
-  const mongoUrl = c.env.MONGO_URL;
   cloudinary.config({
     cloud_name: c.env.CLOUDINARY_CLOUD_NAME,
     api_key: c.env.CLOUDINARY_API_KEY,
     api_secret: c.env.CLOUDINARY_API_SECRET,
   });
-  try {
-    await connectToDatabase(mongoUrl);
-    await next();
-  } catch (err) {
-    return c.json(
-      {
-        success: false,
-        message: "Database connection error",
-        error: err.message,
-      },
-      500
-    );
-  }
+  await next();
 });
 
 app.get("/", (c) => {
@@ -38,8 +25,7 @@ app.get("/", (c) => {
 
 app.get("/stats", async (c) => {
   try {
-    const db = getDb();
-    const stats = await db.collection("stats").findOne({});
+    const stats = await findOne(c.env, "stats", {});
     if (!stats)
       return c.json({
         success: false,
@@ -54,10 +40,8 @@ app.get("/stats", async (c) => {
 
 app.post("/stats", async (c) => {
   try {
-    const db = getDb();
     const body = await c.req.json();
-    const result = await db.collection("stats").insertOne(body);
-    const newStats = await db.collection("stats").findOne({ _id: result.insertedId });
+    const newStats = await insertOne(c.env, "stats", body);
     return c.json({ success: true, data: newStats }, 201);
   } catch (err) {
     return c.json({ success: false, message: err.message }, 500);
@@ -66,18 +50,12 @@ app.post("/stats", async (c) => {
 
 app.put("/stats/:id", async (c) => {
   try {
-    const db = getDb();
-    const { ObjectId } = require("mongodb");
     const id = c.req.param("id");
     const body = await c.req.json();
-    const result = await db.collection("stats").findOneAndUpdate(
-      { _id: new ObjectId(id) },
-      { $set: body },
-      { returnDocument: "after" }
-    );
-    if (!result)
+    const updatedStats = await updateOne(c.env, "stats", { _id: id }, body);
+    if (!updatedStats)
       return c.json({ success: false, message: "Stats not found" }, 404);
-    return c.json({ success: true, data: result });
+    return c.json({ success: true, data: updatedStats });
   } catch (err) {
     return c.json({ success: false, message: err.message }, 500);
   }
@@ -85,11 +63,9 @@ app.put("/stats/:id", async (c) => {
 
 app.delete("/stats/:id", async (c) => {
   try {
-    const db = getDb();
-    const { ObjectId } = require("mongodb");
     const id = c.req.param("id");
-    const result = await db.collection("stats").findOneAndDelete({ _id: new ObjectId(id) });
-    if (!result)
+    const deleted = await deleteOne(c.env, "stats", { _id: id });
+    if (!deleted)
       return c.json({ success: false, message: "Stats not found" }, 404);
     return c.json({ success: true, message: "Stats deleted successfully" });
   } catch (err) {
@@ -100,8 +76,7 @@ app.delete("/stats/:id", async (c) => {
 const createCrudRoutes = (collectionName, basePath) => {
   app.get(basePath, async (c) => {
     try {
-      const db = getDb();
-      const items = await db.collection(collectionName).find({}).toArray();
+      const items = await find(c.env, collectionName, {});
       return c.json({ success: true, data: items });
     } catch (err) {
       return c.json({ success: false, message: err.message }, 500);
@@ -110,10 +85,8 @@ const createCrudRoutes = (collectionName, basePath) => {
 
   app.get(`${basePath}/:id`, async (c) => {
     try {
-      const db = getDb();
-      const { ObjectId } = require("mongodb");
       const id = c.req.param("id");
-      const item = await db.collection(collectionName).findOne({ _id: new ObjectId(id) });
+      const item = await findOne(c.env, collectionName, { _id: id });
       if (!item) return c.json({ success: false, message: "Not found" }, 404);
       return c.json({ success: true, data: item });
     } catch (err) {
@@ -123,10 +96,8 @@ const createCrudRoutes = (collectionName, basePath) => {
 
   app.post(basePath, async (c) => {
     try {
-      const db = getDb();
       const body = await c.req.json();
-      const result = await db.collection(collectionName).insertOne(body);
-      const newItem = await db.collection(collectionName).findOne({ _id: result.insertedId });
+      const newItem = await insertOne(c.env, collectionName, body);
       return c.json({ success: true, data: newItem }, 201);
     } catch (err) {
       return c.json({ success: false, message: err.message }, 500);
@@ -135,17 +106,11 @@ const createCrudRoutes = (collectionName, basePath) => {
 
   app.put(`${basePath}/:id`, async (c) => {
     try {
-      const db = getDb();
-      const { ObjectId } = require("mongodb");
       const id = c.req.param("id");
       const body = await c.req.json();
-      const result = await db.collection(collectionName).findOneAndUpdate(
-        { _id: new ObjectId(id) },
-        { $set: body },
-        { returnDocument: "after" }
-      );
-      if (!result) return c.json({ success: false, message: "Not found" }, 404);
-      return c.json({ success: true, data: result });
+      const updatedItem = await updateOne(c.env, collectionName, { _id: id }, body);
+      if (!updatedItem) return c.json({ success: false, message: "Not found" }, 404);
+      return c.json({ success: true, data: updatedItem });
     } catch (err) {
       return c.json({ success: false, message: err.message }, 500);
     }
@@ -153,11 +118,9 @@ const createCrudRoutes = (collectionName, basePath) => {
 
   app.delete(`${basePath}/:id`, async (c) => {
     try {
-      const db = getDb();
-      const { ObjectId } = require("mongodb");
       const id = c.req.param("id");
-      const result = await db.collection(collectionName).findOneAndDelete({ _id: new ObjectId(id) });
-      if (!result) return c.json({ success: false, message: "Not found" }, 404);
+      const deleted = await deleteOne(c.env, collectionName, { _id: id });
+      if (!deleted) return c.json({ success: false, message: "Not found" }, 404);
       return c.json({ success: true, message: "Deleted successfully" });
     } catch (err) {
       return c.json({ success: false, message: err.message }, 500);
@@ -181,10 +144,8 @@ createCrudRoutes("comments", "/comments");
 
 app.post("/contact", async (c) => {
   try {
-    const db = getDb();
     const body = await c.req.json();
-    const result = await db.collection("contacts").insertOne({ ...body, createdAt: new Date() });
-    const newContact = await db.collection("contacts").findOne({ _id: result.insertedId });
+    const newContact = await insertOne(c.env, "contacts", { ...body, createdAt: new Date().toISOString() });
     return c.json({ success: true, data: newContact }, 201);
   } catch (err) {
     return c.json({ success: false, message: err.message }, 500);
