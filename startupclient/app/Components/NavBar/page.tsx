@@ -4,21 +4,7 @@ import {
   FiMenu,
   FiX,
   FiChevronDown,
-  FiBook,
-  FiUsers,
-  FiTarget,
   FiCalendar,
-  FiBookOpen,
-  FiFileText,
-  FiHeart,
-  FiDollarSign,
-  FiGithub,
-  FiAward,
-  FiClock,
-  FiArchive,
-  FiPackage,
-  FiTool,
-  FiDatabase,
   FiCode,
   FiSmartphone,
   FiCloud,
@@ -26,463 +12,367 @@ import {
   FiLayout,
   FiTrendingUp,
   FiArrowRight,
+  FiUsers,
+  FiTarget,
+  FiAward,
+  FiPackage,
+  FiTool,
+  FiArchive,
+  FiClock,
+  FiHeart,
+  FiDollarSign,
+  FiGithub,
 } from "react-icons/fi";
 import Image from "next/image";
 import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
-  // Handle navbar background on scroll
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      setIsScrolled(window.scrollY > 50);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const dropdownVariants = {
+    hidden: { opacity: 0, y: 15, scale: 0.95 },
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      scale: 1,
+      transition: { type: "spring", stiffness: 300, damping: 20 } as const
+    },
+    exit: { 
+      opacity: 0, 
+      y: 10, 
+      scale: 0.95,
+      transition: { duration: 0.2 }
+    }
+  };
+
+  const getParentHref = (key: string) => {
+    switch (key) {
+      case "services": return "/services";
+      case "about": return "/mission-vision";
+      case "projects": return "/projects/graduated";
+      case "events": return "/events/upcoming";
+      case "involved": return "/careers";
+      case "resources": return "/docs";
+      default: return "/";
+    }
+  };
+
+  const menuItems = {
+    services: [
+      { name: "Web Development", desc: "Scalable web apps", icon: <FiCode />, href: "/services/web" },
+      { name: "Mobile Apps", desc: "iOS & Android", icon: <FiSmartphone />, href: "/services/mobile" },
+      { name: "Cloud & DevOps", desc: "Infrastructure", icon: <FiCloud />, href: "/services/cloud" },
+      { name: "AI & ML", desc: "Intelligent solutions", icon: <FiCpu />, href: "/services/ai" },
+      { name: "Product Design", desc: "UI/UX Design", icon: <FiLayout />, href: "/services/design" },
+      { name: "Consulting", desc: "Strategic advice", icon: <FiTrendingUp />, href: "/services/consulting" },
+    ],
+    about: [
+      { name: "Contributors", desc: "The team behind magic", icon: <FiUsers />, href: "/Contributors" },
+      { name: "Mission & Vision", desc: "Our goals", icon: <FiTarget />, href: "/mission-vision" },
+      { name: "Our Team", desc: "Meet the experts", icon: <FiUsers />, href: "/team" },
+    ],
+    projects: [
+      { name: "Graduated", desc: "Production-ready", icon: <FiAward />, href: "/projects/graduated" },
+      { name: "Incubating", desc: "Growing projects", icon: <FiPackage />, href: "/projects/incubating" },
+      { name: "Sandbox", desc: "Experimental", icon: <FiTool />, href: "/projects/sandbox" },
+      { name: "Archived", desc: "Past projects", icon: <FiArchive />, href: "/projects/archived" },
+    ],
+    events: [
+      { name: "Upcoming Events", desc: "Don't miss out", icon: <FiCalendar />, href: "/events/upcoming" },
+      { name: "Past Events", desc: "Our history", icon: <FiClock />, href: "/events/past" },
+    ],
+    involved: [
+      { name: "Volunteer", desc: "Join our program", icon: <FiHeart />, href: "/volunteer" },
+      { name: "Careers", desc: "Work with us", icon: <FiDollarSign />, href: "/careers" },
+      { name: "Contribute", desc: "Open source", icon: <FiGithub />, href: "/contribute" },
+    ],
+    resources: [
+      { name: "Case Studies", desc: "Success stories", icon: <FiTrendingUp />, href: "/case-studies" },
+      { name: "Documentation", desc: "Tech guides", icon: <FiArchive />, href: "/docs" },
+      { name: "Sponsorship", desc: "Support us", icon: <FiDollarSign />, href: "/sponsor" },
+    ]
+  };
+
   return (
-    <div
-      className={`fixed w-full z-50 transition-all duration-500 text-white text-lg ${isScrolled ? "border-b border-white/10" : ""
+    <nav className={`fixed w-full z-50 transition-all duration-700 px-4 pt-6 ${isScrolled ? "pt-4" : "pt-6"}`}>
+      <div 
+        className={`container mx-auto max-w-7xl transition-all duration-700 rounded-3xl border border-white/40 ${
+          isScrolled 
+            ? "bg-white/30 backdrop-blur-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] py-2 saturate-[2] backdrop-brightness-110" 
+            : "bg-transparent py-4 border-transparent shadow-none"
         }`}
-      style={{
-        backgroundColor: isScrolled
-          ? "rgba(10, 10, 31, 0.85)"
-          : "rgba(10, 10, 31, 0.5)",
-        backdropFilter: isScrolled ? "blur(20px)" : "blur(10px)",
-        boxShadow: isScrolled ? "0 8px 32px rgba(0, 0, 0, 0.3)" : "none",
-        transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
-      }}
-    >
-      <div className="container mx-auto px-4 py-4 flex items-center justify-between max-w-screen-xl">
-        {/* Logo */}
-        <div className="flex items-center space-x-20">
-          <Link href="/" className="transition-transform flex-shrink-0">
-            <Image
-              src="/assets/logo.png"
-              alt="startup-logo"
-              width={1010}
-              height={910}
-              className="h-16 w-auto"
-            />
+        style={{
+          background: isScrolled 
+            ? "linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.1))" 
+            : "transparent",
+          boxShadow: isScrolled 
+            ? "inset 0 1px 1px 0 rgba(255, 255, 255, 0.8), 0 20px 40px rgba(0, 0, 0, 0.1)" 
+            : "none"
+        }}
+      >
+        <div className="flex items-center justify-between px-10">
+          {/* Logo Section */}
+          <Link href="/" className="flex items-center space-x-3 group outline-none">
+            <div className="relative h-20 w-20 flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
+              <Image
+                src="/assets/logo.png"
+                alt="Eagle Logo"
+                width={900}
+                height={900}
+                className="w-full h-full object-contain filter drop-shadow-sm"
+                priority
+              />
+            </div>
+            <div className="flex flex-col leading-none">
+              <span className={`text-2xl font-black tracking-tight bg-clip-text text-transparent bg-linear-to-r transition-all duration-700 ${
+                isScrolled 
+                  ? "from-slate-900 via-blue-900 to-blue-700" 
+                  : "from-white via-blue-100 to-blue-400"
+              }`}>
+                Eagle Infotech
+              </span>
+              <span className={`text-[10px] uppercase font-black tracking-[0.3em] transition-colors duration-700 mt-1 ${
+                isScrolled ? "text-blue-700" : "text-blue-400"
+              }`}>
+                Digital Evaluation
+              </span>
+            </div>
           </Link>
 
           {/* Desktop Menu */}
-          <nav className="hidden lg:flex space-x-8 mx-8">
-            <Link href="/" className="nav-link">
+          <div className="hidden lg:flex items-center space-x-2">
+            <Link 
+              href="/" 
+              className={`px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-500 hover:-translate-y-0.5 ${
+                isScrolled 
+                  ? "text-slate-800 hover:text-blue-700 hover:bg-slate-900/5 shadow-sm hover:shadow-slate-200" 
+                  : "text-gray-100 hover:text-white hover:bg-white/10"
+              }`}
+            >
               Home
             </Link>
 
-            {/* Services Dropdown */}
-            <div className="relative group">
-              <button className="nav-link flex items-center gap-1 group">
-                Services
-                <FiChevronDown className="transition-transform group-hover:rotate-180" />
-              </button>
+            {Object.entries(menuItems).map(([key, items]) => (
+              <div 
+                key={key}
+                className="relative"
+                onMouseEnter={() => setActiveDropdown(key)}
+                onMouseLeave={() => setActiveDropdown(null)}
+              >
+                <button className={`flex items-center gap-1.5 px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-500 hover:-translate-y-0.5 ${
+                  activeDropdown === key 
+                    ? (isScrolled ? "text-blue-700 bg-blue-500/10 shadow-inner" : "text-blue-400 bg-blue-500/10 shadow-inner") 
+                    : (isScrolled ? "text-slate-800 hover:text-blue-700 hover:bg-slate-900/5" : "text-gray-100 hover:text-white hover:bg-white/10")
+                }`}>
+                  <span className="capitalize">{key}</span>
+                  <FiChevronDown className={`transition-transform duration-500 ${activeDropdown === key ? "rotate-180" : ""}`} />
+                </button>
 
-              <div className="absolute left-0 top-full hidden group-hover:block transform transition-all duration-300 opacity-0 group-hover:opacity-100 -translate-y-2 group-hover:translate-y-0">
-                <div className="p-6 bg-gradient-to-br from-gray-800/95 to-gray-900/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 mt-2 w-80">
-                  <div className="space-y-4">
-                    <h3 className="text-xl font-bold text-blue-400 mb-2">
-                      Our Expertise
-                    </h3>
-
-                    <Link href="/services/web" className="menu-item">
-                      <FiCode className="text-blue-400" />
-                      <div>
-                        <h4 className="font-medium">Web Development</h4>
-                        <p className="text-sm text-gray-400">Scalable web apps</p>
+                <AnimatePresence>
+                  {activeDropdown === key && (
+                    <motion.div
+                      variants={dropdownVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      className="absolute top-full left-1/2 -translate-x-1/2 pt-5 w-85 z-50"
+                    >
+                      <div className={`rounded-4xl p-5 shadow-2xl backdrop-blur-3xl transition-all duration-700 border overflow-hidden ${
+                        isScrolled 
+                          ? "bg-white/70 border-white/60 saturate-[2]" 
+                          : "bg-slate-950/70 border-white/10 saturate-[1.8]"
+                      }`}
+                      style={{
+                        background: isScrolled 
+                          ? "linear-gradient(165deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.4))" 
+                          : "linear-gradient(165deg, rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.4))",
+                        boxShadow: "inset 0 1px 1px 0 rgba(255,255,255,0.5), 0 30px 60px -12px rgba(0,0,0,0.3)"
+                      }}>
+                        <div className="grid gap-3">
+                          {items.map((item) => (
+                            <Link 
+                              key={item.name} 
+                              href={item.href}
+                              className={`group flex items-start gap-4 p-4 rounded-2xl transition-all duration-500 border border-transparent ${
+                                isScrolled 
+                                  ? "hover:bg-blue-50/50 hover:border-blue-100/50" 
+                                  : "hover:bg-white/5 hover:border-white/5"
+                              }`}
+                            >
+                              <div className={`p-3 rounded-2xl transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 shadow-md ${
+                                isScrolled ? "bg-blue-600 text-white shadow-blue-500/20" : "bg-blue-500/20 text-blue-400 shadow-blue-500/10"
+                              }`}>
+                                {item.icon}
+                              </div>
+                              <div className="flex-1">
+                                <div className={`text-[0.95rem] font-black transition-colors ${
+                                  isScrolled 
+                                    ? "text-slate-900 group-hover:text-blue-700" 
+                                    : "text-white group-hover:text-blue-400"
+                                }`}>
+                                  {item.name}
+                                </div>
+                                <div className={`text-xs font-semibold leading-relaxed transition-colors mt-0.5 ${
+                                  isScrolled ? "text-slate-500" : "text-gray-400"
+                                }`}>
+                                  {item.desc}
+                                </div>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                        <div className={`mt-5 pt-5 border-t ${isScrolled ? "border-slate-100" : "border-white/5"}`}>
+                          <Link href={getParentHref(key)} className="flex items-center justify-between px-5 py-2.5 rounded-xl bg-blue-600/5 text-xs font-black text-blue-700 hover:bg-blue-600 hover:text-white transition-all duration-500 group">
+                            Explore {key}
+                            <FiArrowRight className="group-hover:translate-x-1.5 transition-transform duration-500" />
+                          </Link>
+                        </div>
                       </div>
-                    </Link>
-
-                    <Link href="/services/mobile" className="menu-item">
-                      <FiSmartphone className="text-blue-400" />
-                      <div>
-                        <h4 className="font-medium">Mobile Apps</h4>
-                        <p className="text-sm text-gray-400">iOS & Android</p>
-                      </div>
-                    </Link>
-
-                    <Link href="/services/cloud" className="menu-item">
-                      <FiCloud className="text-blue-400" />
-                      <div>
-                        <h4 className="font-medium">Cloud & DevOps</h4>
-                        <p className="text-sm text-gray-400">Infrastructure</p>
-                      </div>
-                    </Link>
-
-                    <Link href="/services/ai" className="menu-item">
-                      <FiCpu className="text-blue-400" />
-                      <div>
-                        <h4 className="font-medium">AI & ML</h4>
-                        <p className="text-sm text-gray-400">Intelligent solutions</p>
-                      </div>
-                    </Link>
-
-                    <Link href="/services/design" className="menu-item">
-                      <FiLayout className="text-blue-400" />
-                      <div>
-                        <h4 className="font-medium">Product Design</h4>
-                        <p className="text-sm text-gray-400">UI/UX</p>
-                      </div>
-                    </Link>
-
-                    <Link href="/services/consulting" className="menu-item">
-                      <FiTrendingUp className="text-blue-400" />
-                      <div>
-                        <h4 className="font-medium">Consulting</h4>
-                        <p className="text-sm text-gray-400">Strategic advice</p>
-                      </div>
-                    </Link>
-
-                    <div className="pt-2 border-t border-white/10">
-                      <Link href="/services" className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1">
-                        View All Services <FiArrowRight />
-                      </Link>
-                    </div>
-                  </div>
-                </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
-            </div>
+            ))}
 
-            {/* About Dropdown */}
-            <div className="relative group">
-              <button className="nav-link flex items-center gap-1 group">
-                About
-                <FiChevronDown className="transition-transform group-hover:rotate-180" />
-              </button>
-
-              <div className="absolute left-0 top-full hidden group-hover:block transform transition-all duration-300 opacity-0 group-hover:opacity-100 -translate-y-2 group-hover:translate-y-0">
-                <div className="p-6 bg-gradient-to-br from-gray-800/95 to-gray-900/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 mt-2 w-72">
-                  <div className="space-y-4">
-                    <h3 className="text-xl font-bold text-blue-400 mb-2">
-                      Discover Us
-                    </h3>
-                    <Link href="/Contributors" className="menu-item">
-                      <FiUsers className="text-blue-400 mt-7" />
-                      <div>
-                        <h4 className="font-medium">Contributors</h4>
-                        <p className="text-sm text-gray-400">
-                          The Team Behind this Magic
-                        </p>
-                      </div>
-                    </Link>
-
-                    <Link href="/mission-vision" className="menu-item">
-                      <FiTarget className="text-blue-400 mt-7" />
-                      <div>
-                        <h4 className="font-medium">Mission & Vision</h4>
-                        <p className="text-sm text-gray-400">
-                          Our goals and aspirations
-                        </p>
-                      </div>
-                    </Link>
-
-                    <Link href="/team" className="menu-item">
-                      <FiUsers className="text-blue-400" />
-                      <div>
-                        <h4 className="font-medium">Our Team</h4>
-                        <p className="text-sm text-gray-400">
-                          Meet the people behind this Magic
-                        </p>
-                      </div>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Projects Dropdown */}
-            <div className="relative group">
-              <button className="nav-link flex items-center gap-1 group">
-                Projects
-                <FiChevronDown className="transition-transform group-hover:rotate-180" />
-              </button>
-
-              <div className="absolute left-1/2 -translate-x-1/2 top-full hidden group-hover:block transform transition-all duration-300 opacity-0 group-hover:opacity-100 -translate-y-2 group-hover:translate-y-0">
-                <div className="p-6 bg-gradient-to-br from-gray-800/95 to-gray-900/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 mt-2 w-max">
-                  <div className="space-y-4">
-                    <h3 className="text-xl font-bold text-blue-400 mb-4">
-                      Project Categories
-                    </h3>
-
-                    <Link href="/projects/graduated" className="menu-item">
-                      <FiAward className="text-blue-400" />
-                      <div>
-                        <h4 className="font-medium">Graduated</h4>
-                        <p className="text-sm text-gray-400">
-                          Production-ready projects
-                        </p>
-                      </div>
-                    </Link>
-
-                    <Link href="/projects/incubating" className="menu-item">
-                      <FiPackage className="text-blue-400" />
-                      <div>
-                        <h4 className="font-medium">Incubating</h4>
-                        <p className="text-sm text-gray-400">
-                          Growing projects
-                        </p>
-                      </div>
-                    </Link>
-
-                    <Link href="/projects/sandbox" className="menu-item">
-                      <FiTool className="text-blue-400" />
-                      <div>
-                        <h4 className="font-medium">Sandbox</h4>
-                        <p className="text-sm text-gray-400">
-                          Experimental projects
-                        </p>
-                      </div>
-                    </Link>
-
-                    <Link href="/projects/archived" className="menu-item">
-                      <FiArchive className="text-blue-400" />
-                      <div>
-                        <h4 className="font-medium">Archived</h4>
-                        <p className="text-sm text-gray-400">
-                          Completed projects
-                        </p>
-                      </div>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Events Dropdown */}
-            <div className="relative group">
-              <button className="nav-link flex items-center gap-1">
-                Events
-                <FiChevronDown className="transition-transform group-hover:rotate-180" />
-              </button>
-
-              <div className="absolute left-0 top-full hidden group-hover:block transform transition-all duration-300 opacity-0 group-hover:opacity-100 -translate-y-2 group-hover:translate-y-0">
-                <div className="p-6 bg-gradient-to-br from-gray-800/95 to-gray-900/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 mt-2 w-80">
-                  <h3 className="text-xl font-bold text-blue-400 mb-4">
-                    Our Events
-                  </h3>
-
-                  <div className="space-y-4">
-                    <Link href="/events/upcoming" className="menu-item">
-                      <FiCalendar className="text-blue-400" />
-                      <div>
-                        <h4 className="font-medium">Upcoming Events</h4>
-                        <p className="text-sm text-gray-400">
-                          Check our scheduled events
-                        </p>
-                      </div>
-                    </Link>
-
-                    <Link href="/events/past" className="menu-item">
-                      <FiClock className="text-blue-400" />
-                      <div>
-                        <h4 className="font-medium">Past Events</h4>
-                        <p className="text-sm text-gray-400">
-                          Browse our event history
-                        </p>
-                      </div>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Blog Link */}
-            <Link href="/blogs" className="nav-link">
+            <Link 
+              href="/blogs" 
+              className={`px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-500 hover:-translate-y-0.5 ${
+                isScrolled 
+                  ? "text-slate-800 hover:text-blue-700 hover:bg-slate-900/5 shadow-sm hover:shadow-slate-200" 
+                  : "text-gray-100 hover:text-white hover:bg-white/10"
+              }`}
+            >
               Blog
-            </Link>
-
-            {/* Get Involved Dropdown */}
-            <div className="relative group">
-              <button className="nav-link flex items-center gap-1">
-                Get Involved
-                <FiChevronDown className="transition-transform group-hover:rotate-180" />
-              </button>
-
-              <div className="absolute left-0 top-full hidden group-hover:block transform transition-all opacity-0 duration-300 group-hover:opacity-100 -translate-y-2 group-hover:translate-y-0">
-                <div className="p-6 bg-gradient-to-br from-gray-800/95 to-gray-900/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 mt-2 w-96">
-                  <h3 className="text-xl font-bold text-blue-400 mb-4">
-                    Join Our Community
-                  </h3>
-
-                  <div className="space-y-4">
-                    <Link href="/volunteer" className="menu-item">
-                      <FiHeart className="text-blue-400" />
-                      <div>
-                        <h4 className="font-medium">Volunteer</h4>
-                        <p className="text-sm text-gray-400">
-                          Join our volunteer program
-                        </p>
-                      </div>
-                    </Link>
-                    <Link href="/careers" className="menu-item">
-                      <FiDollarSign className="text-blue-400" />
-                      <div>
-                        <h4 className="font-medium">Careers</h4>
-                        <p className="text-sm text-gray-400">
-                          Explore career opportunities
-                        </p>
-                      </div>
-                    </Link>
-                    <Link href="/contribute" className="menu-item">
-                      <FiGithub className="text-blue-400" />
-                      <div>
-                        <h4 className="font-medium">Contribute to Projects</h4>
-                        <p className="text-sm text-gray-400">
-                          Help us build better software
-                        </p>
-                      </div>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </nav>
-        </div>
-
-        {/* CTA Button */}
-        <div className="flex items-center gap-6">
-          <div className="hidden lg:flex">
-            <Link href="/book-meeting">
-              <button className="group relative px-8 py-3 bg-blue-600 hover:bg-blue-700 rounded-full font-semibold transition-all duration-300 hover:shadow-[0_0_20px_rgba(37,99,235,0.5)] overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-                <span className="relative">Book Meeting</span>
-              </button>
             </Link>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            className="lg:hidden focus:outline-none"
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label="Toggle menu"
-          >
-            {isOpen ? (
-              <FiX className="w-8 h-8" />
-            ) : (
-              <FiMenu className="w-8 h-8" />
-            )}
-          </button>
+          {/* CTA & Mobile Toggle */}
+          <div className="flex items-center gap-6">
+            <Link href="/book-meeting" className="hidden sm:block outline-none">
+              <motion.button
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                className={`px-8 py-3.5 rounded-2xl font-black text-sm transition-all relative overflow-hidden group shadow-2xl ${
+                  isScrolled 
+                    ? "bg-blue-600 text-white hover:bg-blue-700 shadow-blue-500/30" 
+                    : "bg-blue-600 text-white shadow-blue-600/40"
+                }`}
+              >
+                <span className="relative z-10">Book Meeting</span>
+                <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+              </motion.button>
+            </Link>
+
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className={`lg:hidden p-3 rounded-2xl transition-all duration-500 ${
+                isScrolled ? "text-slate-900 hover:bg-slate-900/10" : "text-white hover:bg-white/10 outline-none"
+              }`}
+            >
+              {isOpen ? <FiX className="w-7 h-7" /> : <FiMenu className="w-7 h-7" />}
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Mobile Menu */}
-      <div
-        className={`lg:hidden transition-all duration-500 ease-in-out ${isOpen ? "max-h-[calc(100vh-5rem)] opacity-100" : "max-h-0 opacity-0"
-          } overflow-y-auto fixed w-full top-20 border-t border-white/10`}
-        style={{
-          backgroundColor: "rgba(10, 10, 31, 0.95)",
-          backdropFilter: "blur(20px)",
-        }}
-      >
-        <nav className="container mx-auto px-4 py-4">
-          <div className="space-y-6">
-            {/* Mobile Home */}
-            <Link
-              href="/"
-              className="block px-4 py-2 text-lg hover:bg-gray-700 rounded-lg"
-            >
-              Home
-            </Link>
-
-            {/* Mobile About */}
-            <div className="space-y-2">
-              <h3 className="px-4 text-blue-400 font-semibold">About</h3>
-              <div className="pl-4 space-y-2">
-                <Link href="/Contributors" className="mobile-menu-item">
-                  <FiUsers className="w-5 h-5" />
-                  <span>Contributors</span>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            className={`lg:hidden mt-4 overflow-hidden rounded-4xl border p-2 shadow-2xl backdrop-blur-3xl transition-all duration-500 ${
+              isScrolled 
+                ? "bg-white/80 border-white/60 saturate-[2]" 
+                : "bg-slate-950/80 border-white/10 saturate-[1.8]"
+            }`}
+            style={{
+              background: isScrolled 
+                ? "linear-gradient(165deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.5))" 
+                : "linear-gradient(165deg, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.6))",
+              boxShadow: "inset 0 1px 1px 0 rgba(255,255,255,0.4), 0 30px 60px rgba(0,0,0,0.3)"
+            }}
+          >
+            <div className="p-6 space-y-8 max-h-[80vh] overflow-y-auto custom-scrollbar">
+              {Object.entries(menuItems).map(([key, items]) => (
+                <div key={key} className="space-y-4">
+                  <h3 className={`text-[10px] uppercase font-black tracking-[0.3em] px-2 ${
+                    isScrolled ? "text-blue-700" : "text-blue-400"
+                  }`}>
+                    {key}
+                  </h3>
+                  <div className="grid gap-2">
+                    {items.map((item) => (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        onClick={() => setIsOpen(false)}
+                        className={`flex items-center gap-4 p-4 rounded-2xl transition-all border border-transparent ${
+                          isScrolled 
+                            ? "hover:bg-blue-50/50 hover:border-blue-100/50 text-slate-800" 
+                            : "hover:bg-white/5 hover:border-white/5 text-gray-200"
+                        }`}
+                      >
+                        <div className={`p-3 rounded-2xl shadow-md ${
+                          isScrolled ? "bg-blue-600 text-white" : "bg-blue-500/20 text-blue-400"
+                        }`}>
+                          {item.icon}
+                        </div>
+                        <span className="text-[0.95rem] font-bold">{item.name}</span>
+                      </Link>
+                    ))}
+                    <div className="pt-2 px-1">
+                      <Link 
+                        href={getParentHref(key)} 
+                        onClick={() => setIsOpen(false)}
+                        className={`flex items-center justify-between p-4 rounded-2xl text-xs font-black transition-all group ${
+                          isScrolled 
+                            ? "bg-blue-600 text-white shadow-lg shadow-blue-500/20" 
+                            : "bg-blue-500/10 text-blue-400 border border-blue-500/20"
+                        }`}
+                      >
+                        Explore All {key}
+                        <FiArrowRight className="group-hover:translate-x-1.5 transition-transform duration-500" />
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              
+              <div className={`pt-8 border-t space-y-4 ${isScrolled ? "border-slate-100" : "border-white/5"}`}>
+                <Link 
+                  href="/blogs" 
+                  onClick={() => setIsOpen(false)} 
+                  className={`flex items-center justify-center p-4 rounded-2xl font-black transition-all ${
+                    isScrolled ? "bg-slate-100 text-slate-900 hover:bg-slate-200" : "bg-white/5 text-white hover:bg-white/10"
+                  }`}
+                >
+                  Blog
                 </Link>
-                <Link href="/mission-vision" className="mobile-menu-item">
-                  <FiTarget className="w-5 h-5" />
-                  <span>Mission & Vision</span>
-                </Link>
-                <Link href="/team" className="mobile-menu-item">
-                  <FiUsers className="w-5 h-5" />
-                  <span>Our Team</span>
-                </Link>
-              </div>
-            </div>
-
-            {/* Mobile Projects */}
-            <div className="space-y-2">
-              <h3 className="px-4 text-blue-400 font-semibold">Projects</h3>
-              <div className="pl-4 space-y-2">
-                <Link href="/projects/graduated" className="mobile-menu-item">
-                  <FiAward className="w-5 h-5" />
-                  <span>Graduated Projects</span>
-                </Link>
-                <Link href="/projects/incubating" className="mobile-menu-item">
-                  <FiPackage className="w-5 h-5" />
-                  <span>Incubating Projects</span>
-                </Link>
-                <Link href="/projects/sandbox" className="mobile-menu-item">
-                  <FiTool className="w-5 h-5" />
-                  <span>Sandbox Projects</span>
-                </Link>
-                <Link href="/projects/archived" className="mobile-menu-item">
-                  <FiArchive className="w-5 h-5" />
-                  <span>Archived Projects</span>
-                </Link>
-              </div>
-            </div>
-
-            {/* Mobile Events */}
-            <div className="space-y-2">
-              <h3 className="px-4 text-blue-400 font-semibold">Events</h3>
-              <div className="pl-4 space-y-2">
-                <Link href="/events/upcoming" className="mobile-menu-item">
-                  <FiCalendar className="w-5 h-5" />
-                  <span>Upcoming Events</span>
-                </Link>
-                <Link href="/events/past" className="mobile-menu-item">
-                  <FiClock className="w-5 h-5" />
-                  <span>Past Events</span>
-                </Link>
-              </div>
-            </div>
-
-            {/* Mobile Blog */}
-            <Link
-              href="/blogs"
-              className="block px-4 py-2 text-lg hover:bg-gray-700 rounded-lg"
-            >
-              Blog
-            </Link>
-
-            {/* Get Involved */}
-            <div className="space-y-2">
-              <h3 className="px-4 text-blue-400 font-semibold">Get Involved</h3>
-              <div className="pl-4 space-y-2">
-                <Link href="/volunteer" className="mobile-menu-item">
-                  <FiHeart className="w-5 h-5" />
-                  <span>Volunteer</span>
-                </Link>
-                .{" "}
-                <Link href="/careers" className="mobile-menu-item">
-                  <FiDollarSign className="w-5 h-5" />
-                  <span>Careers</span>
-                </Link>
-                <Link href="/contribute" className="mobile-menu-item">
-                  <FiGithub className="w-5 h-5" />
-                  <span>Contribute</span>
+                <Link href="/book-meeting" onClick={() => setIsOpen(false)}>
+                  <button className="w-full py-5 rounded-2xl bg-blue-600 font-black text-white shadow-xl shadow-blue-600/20 active:scale-95 transition-transform">
+                    Book Meeting
+                  </button>
                 </Link>
               </div>
             </div>
-
-            <Link href="/book-meeting">
-              <button className="group relative px-8 py-3 bg-blue-600 hover:bg-blue-700 rounded-full font-semibold transition-all duration-300 hover:shadow-[0_0_20px_rgba(37,99,235,0.5)] overflow-hidden w-full">
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-                <span className="relative">Book Meeting</span>
-              </button>
-            </Link>
-          </div>
-        </nav>
-      </div>
-    </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </nav>
   );
 };
 
