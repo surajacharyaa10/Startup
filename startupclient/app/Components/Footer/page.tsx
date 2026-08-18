@@ -139,9 +139,6 @@ export default function Footer() {
           <p className="text-gray-400 text-sm">
             © {new Date().getFullYear()} Eagle Infotech. All rights reserved.
           </p>
-          <p className="text-gray-400 text-sm">
-            Made with ❤️ by Eagle Infotech Team
-          </p>
         </div>
       </div>
     </footer>
