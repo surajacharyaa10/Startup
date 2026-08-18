@@ -51,8 +51,8 @@ export default function Hero() {
               Build Products
               <br className="hidden sm:block" /> That <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 animate-gradient-x">
-                Defy
-                <br className="sm:hidden" /> Expectations
+                Make 
+                <br className="sm:hidden" /> Impact
               </span>
             </h1>
 
