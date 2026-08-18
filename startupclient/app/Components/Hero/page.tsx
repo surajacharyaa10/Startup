@@ -34,7 +34,7 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-[#0a0a1f] text-white py-20 md:py-32">
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-black text-white py-20 md:py-32">
       {/* Background Gradients */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-[20%] -left-[10%] w-[70vw] h-[70vw] bg-blue-600/20 rounded-full blur-[120px] mix-blend-screen animate-pulse-slow"></div>
@@ -46,19 +46,24 @@ export default function Hero() {
         <div className="flex flex-col lg:flex-row items-center gap-8 md:gap-16 lg:gap-24">
           {/* Left Content */}
           <div className="flex-1 text-center lg:text-left space-y-6 md:space-y-8 w-full">
+            <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm animate-fade-in-up">
+              
+              <span className="text-xs sm:text-sm font-medium text-blue-200">
+                Accepting New Clients
+              </span>
+            </div>
 
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold leading-tight tracking-tight px-2 sm:px-0">
-              Build Products
-              <br className="hidden sm:block" /> That <br />
+              We Build
+              <br className="hidden sm:block" /> Products <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 animate-gradient-x">
-                Make 
-                <br className="sm:hidden" /> Impact
+                That Go
+                <br className="sm:hidden" /> Beyond Expectations
               </span>
-            </h1>
+            </h1> 
 
             <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed px-4 sm:px-0">
-              We transform ambitious ideas into scalable, high-impact digital
-              solutions. From MVP to enterprise, we engineer success.
+             Great ideas deserve more than just execution — they deserve thoughtful strategy, smart design, and strong engineering.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start pt-2 sm:pt-4 px-4 sm:px-0">
