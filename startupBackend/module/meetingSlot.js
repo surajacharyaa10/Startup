@@ -25,6 +25,7 @@ const BookingSchema = new mongoose.Schema({
     purpose: { type: String, required: true },
 
     status: { type: String, enum: ["pending", "confirmed", "cancelled"], default: "pending" },
+    meetingType: { type: String, enum: ["virtual", "physical"], default: "virtual" },
 
     bookingCode: {
         type: String,

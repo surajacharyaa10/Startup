@@ -195,9 +195,9 @@ export default function BookMeeting() {
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 bg-blue-600 text-white rounded"
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white rounded font-semibold transition"
             >
-              {loading ? "Booking..." : "Confirm Booking"}
+              {loading ? "Sending Booking Request..." : "Booking Request"}
             </button>
           </form>
           <button

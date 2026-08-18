@@ -50,14 +50,14 @@ export default function BookingCard({ booking, onUpdateStatus }: BookingCardProp
                             </span>
                             <span className="text-sm font-bold text-zinc-300 truncate">{booking.email}</span>
                         </div>
-                        {booking.phone && (
-                            <div className="flex flex-col gap-1.5 p-4 rounded-2xl bg-zinc-950/50 border border-zinc-800 hover:border-zinc-700 transition-colors">
-                                <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest flex items-center gap-2">
-                                    <FiPhone className="text-blue-500" /> Voice Protocol
-                                </span>
-                                <span className="text-sm font-bold text-zinc-300">{booking.phone}</span>
-                            </div>
-                        )}
+                        <div className="flex flex-col gap-1.5 p-4 rounded-2xl bg-zinc-950/50 border border-zinc-800 hover:border-zinc-700 transition-colors">
+                            <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest flex items-center gap-2">
+                                <FiActivity className="text-purple-400" /> Meeting Mode
+                            </span>
+                            <span className="text-sm font-bold text-white">
+                                {booking.meetingType === "physical" ? "🏢 In-Person (Physical)" : "🌐 Virtual (Online)"}
+                            </span>
+                        </div>
                     </div>
 
                     <div className="p-4 rounded-2xl bg-zinc-950/50 border border-zinc-800">

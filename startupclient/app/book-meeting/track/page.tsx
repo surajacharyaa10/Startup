@@ -208,6 +208,18 @@ export default function TrackBookingPage() {
 
                                     <div className="space-y-6">
                                         <div className="flex items-start gap-4">
+                                            <div className="w-10 h-10 bg-emerald-500/10 rounded-lg flex items-center justify-center text-emerald-400 shrink-0">
+                                                <FiInfo className="w-5 h-5" />
+                                            </div>
+                                            <div>
+                                                <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Meeting Type</p>
+                                                <p className="text-white font-medium">
+                                                    {booking.meetingType === "physical" ? "🏢 In-Person (Physical)" : "🌐 Virtual (Online)"}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-start gap-4">
                                             <div className="w-10 h-10 bg-orange-500/10 rounded-lg flex items-center justify-center text-orange-400 shrink-0">
                                                 <FiInfo className="w-5 h-5" />
                                             </div>

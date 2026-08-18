@@ -18,6 +18,7 @@ export interface Booking {
   phone: string;
   address: string;
   purpose: string;
+  meetingType?: "virtual" | "physical";
   status: "pending" | "confirmed" | "cancelled";
   bookingCode: string;
   createdAt: string;

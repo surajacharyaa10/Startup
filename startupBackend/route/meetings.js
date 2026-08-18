@@ -61,6 +61,10 @@ const sendBookingEmail = async (booking, statusType) => {
                             <div class="value">${booking.slotId.startTime} - ${booking.slotId.endTime}</div>
                         </div>
                         <div class="detail-row">
+                            <div class="label">Meeting Type</div>
+                            <div class="value">${booking.meetingType === "physical" ? "🏢 Physical (Face-to-Face)" : "🌐 Virtual (Online)"}</div>
+                        </div>
+                        <div class="detail-row">
                             <div class="label">Purpose</div>
                             <div class="value">${booking.purpose}</div>
                         </div>
@@ -203,7 +207,7 @@ router.delete("/slots/:id", asyncHandler(async (req, res) => {
 
 // User: Book a slot
 router.post("/book", asyncHandler(async (req, res) => {
-    const { slotId, name, email, phone, address, purpose } = req.body;
+    const { slotId, name, email, phone, address, purpose, meetingType } = req.body;
 
     const slot = await MeetingSlot.findById(slotId);
     if (!slot) return res.status(404).json({ message: "Slot not found" });
@@ -218,7 +222,8 @@ router.post("/book", asyncHandler(async (req, res) => {
         email,
         phone,
         address,
-        purpose
+        purpose,
+        meetingType: meetingType || "virtual"
     });
 
     slot.currentBookings++;
@@ -227,8 +232,8 @@ router.post("/book", asyncHandler(async (req, res) => {
 
     const populated = await Booking.findById(booking._id).populate("slotId");
 
-    // Send Pending Email
-    await sendBookingEmail(populated, "pending");
+    // Send Pending Email (non-blocking)
+    sendBookingEmail(populated, "pending").catch((err) => console.error("Email sending failed:", err));
 
     res.status(201).json({
         success: true,

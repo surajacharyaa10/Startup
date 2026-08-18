@@ -20,6 +20,7 @@ export interface Booking {
   phone?: string;
   company?: string;
   purpose: string;
+  meetingType?: "virtual" | "physical";
   status: "pending" | "confirmed" | "cancelled";
   bookingCode: string;
   createdAt: string;
@@ -32,6 +33,7 @@ export interface BookingInput {
   phone?: string;
   company?: string;
   purpose: string;
+  meetingType?: "virtual" | "physical";
 }
 
 export const meetingsApi = {

@@ -56,6 +56,7 @@ export default function BookMeetingPage() {
     phone: "",
     company: "",
     purpose: "",
+    meetingType: "virtual",
   });
   const [loading, setLoading] = useState(false);
   const [bookingCode, setBookingCode] = useState<string | null>(null);
@@ -115,7 +116,7 @@ export default function BookMeetingPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedSlot) return;
+    if (!selectedSlot || loading) return;
     setLoading(true);
     setError(null);
     try {
@@ -373,12 +374,46 @@ export default function BookMeetingPage() {
                       className="w-full p-3 rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
 
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-2">
+                        Meeting Mode / Type
+                      </label>
+                      <div className="grid grid-cols-2 gap-3">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setFormData((p) => ({ ...p, meetingType: "virtual" }))
+                          }
+                          className={`p-3 rounded-lg border text-xs sm:text-sm font-medium flex items-center justify-center gap-2 transition ${
+                            formData.meetingType === "virtual"
+                              ? "bg-blue-600/30 border-blue-500 text-white shadow-md shadow-blue-500/20"
+                              : "bg-gray-800 border-gray-700 text-gray-400 hover:text-white"
+                          }`}
+                        >
+                          <span>🌐 Virtual (Online)</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setFormData((p) => ({ ...p, meetingType: "physical" }))
+                          }
+                          className={`p-3 rounded-lg border text-xs sm:text-sm font-medium flex items-center justify-center gap-2 transition ${
+                            formData.meetingType === "physical"
+                              ? "bg-blue-600/30 border-blue-500 text-white shadow-md shadow-blue-500/20"
+                              : "bg-gray-800 border-gray-700 text-gray-400 hover:text-white"
+                          }`}
+                        >
+                          <span>🏢 In-Person (Physical)</span>
+                        </button>
+                      </div>
+                    </div>
+
                     <button
                       type="submit"
                       disabled={loading}
-                      className="w-full py-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold"
+                      className="w-full py-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold transition"
                     >
-                      {loading ? "Booking…" : "Confirm meeting"}
+                      {loading ? "Sending Booking Request..." : "Booking Request"}
                     </button>
 
                     <div className="text-center text-sm text-gray-400">
@@ -388,20 +423,40 @@ export default function BookMeetingPage() {
                 )}
 
                 {step === "confirmation" && bookingCode && (
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-white mb-2">
-                      Confirmed
+                  <div className="text-center space-y-4 py-4">
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold uppercase tracking-wider">
+                      <span>⏳ Pending Confirmation</span>
                     </div>
-                    <div className="text-sm text-gray-300 mb-4">
-                      Booking code{" "}
-                      <span className="font-mono text-white">
-                        {bookingCode}
-                      </span>
+
+                    <h2 className="text-2xl sm:text-3xl font-bold text-white">
+                      Request Submitted!
+                    </h2>
+
+                    <p className="text-gray-300 text-sm max-w-md mx-auto leading-relaxed">
+                      Your booking request has been received. Our team will review the request and confirm your meeting slot shortly.
+                    </p>
+
+                    <div className="bg-gray-900/80 border border-white/10 rounded-xl p-4 max-w-sm mx-auto space-y-2.5 text-left text-sm">
+                      <div className="flex justify-between border-b border-gray-800 pb-2">
+                        <span className="text-gray-400">Booking Code</span>
+                        <span className="font-mono text-blue-400 font-bold">{bookingCode}</span>
+                      </div>
+                      <div className="flex justify-between border-b border-gray-800 pb-2">
+                        <span className="text-gray-400">Meeting Type</span>
+                        <span className="text-white font-medium">
+                          {formData.meetingType === "physical" ? "🏢 In-Person (Physical)" : "🌐 Virtual (Online)"}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Status</span>
+                        <span className="text-amber-400 font-medium">Pending Review</span>
+                      </div>
                     </div>
-                    <div className="flex gap-3 justify-center">
+
+                    <div className="flex gap-3 justify-center pt-2">
                       <button
                         onClick={() => window.location.reload()}
-                        className="px-4 py-2 bg-white text-gray-900 rounded-md"
+                        className="px-5 py-2.5 bg-white hover:bg-gray-200 text-gray-900 font-semibold rounded-lg transition"
                       >
                         Done
                       </button>
@@ -411,7 +466,7 @@ export default function BookMeetingPage() {
                           setSelectedSlot(null);
                           setBookingCode(null);
                         }}
-                        className="px-4 py-2 bg-gray-700 text-white rounded-md"
+                        className="px-5 py-2.5 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-lg transition"
                       >
                         Book another
                       </button>
