@@ -46,12 +46,7 @@ export default function Hero() {
         <div className="flex flex-col lg:flex-row items-center gap-8 md:gap-16 lg:gap-24">
           {/* Left Content */}
           <div className="flex-1 text-center lg:text-left space-y-6 md:space-y-8 w-full">
-            <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm animate-fade-in-up">
-              
-              <span className="text-xs sm:text-sm font-medium text-blue-200">
-                Accepting New Clients
-              </span>
-            </div>
+
 
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold leading-tight tracking-tight px-2 sm:px-0">
               We Build
